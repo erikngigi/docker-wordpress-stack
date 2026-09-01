@@ -1,0 +1,63 @@
+# docker-compose.yml - Wordpress with PHP-FPM and MySQL
+services:
+  wordpress:
+    image: wordpress:php8.3-fpm
+    container_name: culturalskies-wp-dev
+    restart: unless-stopped
+    volumes:
+      # Wordpress installation files
+      - cs-wp-data:/var/www/html
+      # Custom PHP settings for uploads
+      - ./php/custom-settings.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      # Security keys - generated at https://api.wordpress.org/secret-key/1.1/salt/
+      WORDPRESS_AUTH_KEY: ${WP_AUTH_KEY}
+      WORDPRESS_SECURE_AUTH_KEY: ${WP_SECURE_AUTH_KEY}
+      WORDPRESS_LOGGED_IN_KEY: ${WP_LOGGED_IN_KEY}
+      WORDPRESS_NONCE_KEY: ${WP_NONCE_KEY}
+      WORDPRESS_AUTH_SALT: ${WP_AUTH_SALT}
+      WORDPRESS_SECURE_AUTH_SALT: ${WP_SECURE_AUTH_SALT}
+      WORDPRESS_LOGGED_IN_SALT: ${WP_LOGGED_IN_SALT}
+      WORDPRESS_NONCE_SALT: ${WP_NONCE_SALT}
+      # Table prefix
+      WORDPRESS_TABLE_PREFIX: wp_
+    depends_on:
+      wp-mariadb:
+        condition: service_healthy
+    networks:
+      - cs-wp-network
+
+  wp-mariadb:
+    image: mariadb:11.4
+    container_name: cs-wp-mariadb-dev
+    restart: unless-stopped
+    volumes:
+      - cs-mariadb-data:/var/lib/mysql
+      - ./mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${CS_MARIADB_DATABASE_NAME}
+      MYSQL_USER: ${CS_MARIADB_USER}
+      MYSQL_PASSWORD: ${CS_MARIADB_USER_PASSWORD}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cs-wp-network
+
+networks:
+  cs-wp-network:
+    name: cs-dev-network
+    driver: bridge
+
+volumes:
+  cs-wp-data:
+    name: cs-wp-data
+  cs-mariadb-data:
+    name: cs-mariadb-data
