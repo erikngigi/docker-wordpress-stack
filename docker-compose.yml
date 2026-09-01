@@ -41,7 +41,7 @@ services:
       - cs-mariadb-data:/var/lib/mysql
       - ./mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
     ports:
-      - 3306:3306
+      - 3307:3306
     environment:
       MYSQL_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${CS_MARIADB_DATABASE_NAME}
