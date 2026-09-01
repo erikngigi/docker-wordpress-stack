@@ -6,9 +6,11 @@ services:
     restart: unless-stopped
     volumes:
       # Wordpress installation files
-      - cs-wp-data:/var/www/html
+      - ./src/cs-wordpress:/var/www/html
       # Custom PHP settings for uploads
       - ./php/custom-settings.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
+    ports:
+      - 9000:9000
     environment:
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
       WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
@@ -38,6 +40,8 @@ services:
     volumes:
       - cs-mariadb-data:/var/lib/mysql
       - ./mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
+    ports:
+      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${CS_MARIADB_DATABASE_NAME}
@@ -57,7 +61,5 @@ networks:
     driver: bridge
 
 volumes:
-  cs-wp-data:
-    name: cs-wp-data
   cs-mariadb-data:
     name: cs-mariadb-data
