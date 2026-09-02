@@ -1,7 +1,7 @@
 # docker-compose.yml - Wordpress with PHP-FPM and MySQL
 services:
   wordpress:
-    image: wordpress:php8.3-fpm
+    image: ghcr.io/erikngigi/wordpress-php8.3-fpm:latest
     container_name: culturalskies-wp-dev
     restart: unless-stopped
     volumes:
