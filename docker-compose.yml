@@ -1,12 +1,32 @@
 # docker-compose.yml - Wordpress with PHP-FPM and MySQL
 services:
+  webserver:
+    image: nginx:alpine
+    container_name: wordpress-webserver
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    environment:
+      WP_HOST: wordpress
+      WP_PORT: 9000
+      SERVER_NAME: localhost
+    volumes:
+      - ./src/wordpress-data:/var/www/html
+      - ./nginx/dev.culturalskies.conf.template:/etc/nginx/templates/dev.culturalskies.conf.template:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - wordpress
+    networks:
+      - wordpress-network
+
   wordpress:
     image: ghcr.io/erikngigi/wordpress-php8.3-fpm:latest
-    container_name: culturalskies-wp-dev
+    container_name: wordpress
     restart: unless-stopped
     volumes:
       # Wordpress installation files
-      - ./src/cs-wordpress:/var/www/html
+      - ./src/wordpress-data:/var/www/html
       # Custom PHP settings for uploads
       - ./php/custom-settings.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
     ports:
@@ -31,14 +51,14 @@ services:
       wp-mariadb:
         condition: service_healthy
     networks:
-      - cs-wp-network
+      - wordpress-network
 
   wp-mariadb:
     image: mariadb:11.4
-    container_name: cs-wp-mariadb-dev
+    container_name: wordpress-mariadb
     restart: unless-stopped
     volumes:
-      - cs-mariadb-data:/var/lib/mysql
+      - wordpress-mariadb-data:/var/lib/mysql
       - ./mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
     ports:
       - 3307:3306
@@ -53,13 +73,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - cs-wp-network
+      - wordpress-network
 
 networks:
-  cs-wp-network:
-    name: cs-dev-network
+  wordpress-network:
+    name: wordpress-network
     driver: bridge
 
 volumes:
-  cs-mariadb-data:
-    name: cs-mariadb-data
+  wordpress-mariadb-data:
+    name: wordpress-mariadb-data
+    driver: local

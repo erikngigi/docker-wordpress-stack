@@ -1,0 +1,85 @@
+# ==============================================================================
+# UPSTREAM DEFINITION
+# ==============================================================================
+
+# WordPress PHP-FPM Container
+# Using environment variables for envsubst (defaults to container service name)
+upstream wordpress_backend {
+    server ${WP_HOST}:${WP_PORT};
+}
+
+# ==============================================================================
+# WORDPRESS SITE (HTTP ONLY FOR LOCAL DEV)
+# ==============================================================================
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${SERVER_NAME};
+
+    # Mount path inside the Nginx container
+    root /var/www/html;
+    index index.php index.html;
+
+    # Dedicated Access & Error Logs
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    client_max_body_size 64M;
+
+    # Security Headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+
+    # Gzip Compression
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript image/svg+xml;
+    gzip_min_length 256;
+
+    # Main Location Block (WordPress Permalinks support)
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    # Pass PHP requests to PHP-FPM container
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass wordpress_backend;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+
+        fastcgi_read_timeout 300;
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 4 256k;
+        fastcgi_busy_buffers_size 256k;
+    }
+
+    # Cache Static Assets for 30 Days
+    location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # Restrict Access to Sensitive Files
+    location ~ /\.ht {
+        deny all;
+    }
+
+    location = /wp-config.php {
+        deny all;
+    }
+
+    location ~* /xmlrpc\.php$ {
+        deny all;
+    }
+
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+}

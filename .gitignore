@@ -3,3 +3,7 @@
 
 # Ignore Wordpress files
 src/*
+
+# Ignore nginx configuration and log files
+nginx/conf.d
+nginx/logs
