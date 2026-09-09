@@ -4,7 +4,7 @@ FROM wordpress:php8.3-fpm
 # Maintainer details
 LABEL Maintainer="Eric Ngigi <ericngigi@ericngigi.com>"
 LABEL Description="Development Wordpress Dockerfile with wp-cli installed"
-LABEL Version="1.0"
+LABEL Version="1.1"
 
 # Define build arguments with fallbacks
 ARG USER_NAME=wordpress
