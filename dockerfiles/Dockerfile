@@ -13,7 +13,7 @@ ARG GROUP_ID=1001
 
 # Installed required system dependencies for wp-cli installation
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    sudo git unzip zip curl gnupg bash vim \
+    sudo git unzip zip curl gnupg bash vim less \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer globally
