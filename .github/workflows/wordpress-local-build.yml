@@ -1,12 +1,11 @@
-name: Custom Wordpress PHP-FPM Docker image with WP-CLI
+name: Local development Wordpress PHP-FPM Docker image with WP-CLI
 on:
   push:
     branches:
-      - main
       - local-dev
     paths:
-      - "dockerfiles/**"
-      - ".github/workflows/wordpress-build.yml"
+      - "dockerfiles/local-development"
+      - ".github/workflows/wordpress-local-build.yml"
   workflow_dispatch:
     inputs:
       tags:
@@ -36,12 +35,12 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
-          context: ./dockerfiles
-          file: ./dockerfiles/Dockerfile
+          context: ./dockerfiles/local-development
+          file: ./dockerfiles/local-development/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ vars.WORDPRESS_IMAGE_NAME }}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.WORDPRESS_IMAGE_NAME }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ vars.WORDPRESS_IMAGE_NAME }}:local
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.WORDPRESS_IMAGE_NAME }}:local
 
       - name: Image build complete
         run: echo "✅ Custom Wordpress docker image built and pushed successfully."

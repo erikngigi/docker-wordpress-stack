@@ -21,7 +21,7 @@ services:
       - wordpress-network
 
   wordpress:
-    image: ghcr.io/erikngigi/wordpress-php8.3-fpm:latest
+    image: erikngigi/wordpress-php8.3-fpm:latest
     container_name: wordpress
     restart: unless-stopped
     volumes:

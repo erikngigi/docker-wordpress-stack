@@ -7,9 +7,9 @@ LABEL Description="Development Wordpress Dockerfile with wp-cli installed"
 LABEL Version="1.0"
 
 # Define build arguments with fallbacks
-ARG USER_NAME=wordpress-dev
-ARG USER_ID=1001
-ARG GROUP_ID=1001
+ARG USER_NAME=wordpress
+ARG USER_ID=1000
+ARG GROUP_ID=1000
 
 # Installed required system dependencies for wp-cli installation
 RUN apt-get update && apt-get install -y --no-install-recommends \
