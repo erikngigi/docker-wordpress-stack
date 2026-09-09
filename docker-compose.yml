@@ -12,7 +12,7 @@ services:
       SERVER_NAME: localhost
     volumes:
       - ./wordpress-data:/var/www/html
-      - ./wordpress/settings/templates/nginx/dev.culturalskies.conf.template:/etc/nginx/templates/dev.culturalskies.conf.template:ro
+      - ./wordpress/settings/templates/nginx/dearaustinchicago.ericngigi.conf.template:/etc/nginx/templates/dearaustinchicago.ericngigi.conf.template:ro
       - ./logs/nginx:/var/log/nginx
       - /dev/null:/etc/nginx/conf.d/default.conf:ro
     depends_on:
@@ -21,7 +21,7 @@ services:
       - wordpress-network
 
   wordpress:
-    image: erikngigi/wordpress-php8.3-fpm:local
+    image: erikngigi/wordpress-php8.3-fpm:dev
     container_name: wordpress
     restart: unless-stopped
     volumes:
