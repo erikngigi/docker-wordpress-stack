@@ -47,7 +47,7 @@ services:
       WORDPRESS_LOGGED_IN_SALT: ${WP_LOGGED_IN_SALT}
       WORDPRESS_NONCE_SALT: ${WP_NONCE_SALT}
       # Table prefix
-      WORDPRESS_TABLE_PREFIX: wp_
+      WORDPRESS_TABLE_PREFIX: cxolf_
     depends_on:
       wp-mariadb:
         condition: service_healthy

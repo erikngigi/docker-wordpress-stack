@@ -1,5 +1,6 @@
 # Ignore .env files
 *.env
+*.env.*
 
 # Ignore Wordpress files
 wordpress-data
