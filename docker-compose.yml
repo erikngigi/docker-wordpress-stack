@@ -11,24 +11,24 @@ services:
       WP_PORT: 9000
       SERVER_NAME: localhost
     volumes:
-      - ./src/wordpress-data:/var/www/html
-      - ./nginx/dev.culturalskies.conf.template:/etc/nginx/templates/dev.culturalskies.conf.template:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/logs:/var/log/nginx
+      - ./wordpress-data:/var/www/html:ro,cached
+      - ./wordpress/settings/templates/nginx/dev.culturalskies.conf.template:/etc/nginx/templates/dev.culturalskies.conf.template:ro
+      - ./logs/nginx:/var/log/nginx
     depends_on:
       - wordpress
     networks:
       - wordpress-network
 
   wordpress:
-    image: erikngigi/wordpress-php8.3-fpm:latest
+    image: erikngigi/wordpress-php8.3-fpm:local
     container_name: wordpress
     restart: unless-stopped
     volumes:
-      # Wordpress installation files
-      - ./src/wordpress-data:/var/www/html
-      # Custom PHP settings for uploads
+      - ./wordpress-data:/var/www/html:cached
       - ./php/custom-settings.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
+      - ./wordpress/settings/php/php.ini-development:/usr/local/etc/php/php.ini:ro
+      - ./wordpress/settings/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+      - ./wordpress/settings/php-fpm/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
     ports:
       - 9000:9000
     environment:
@@ -59,7 +59,7 @@ services:
     restart: unless-stopped
     volumes:
       - wordpress-mariadb-data:/var/lib/mysql
-      - ./mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
+      - ./wordpress/settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
     ports:
       - 3307:3306
     environment:

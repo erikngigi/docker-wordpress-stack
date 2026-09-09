@@ -32,13 +32,18 @@ RUN groupadd -g ${GROUP_ID} ${USER_NAME} \
     && mkdir -p /home/${USER_NAME}/.config \
     && chown -R ${USER_NAME}:${USER_NAME} /home/${USER_NAME}
 
+# Set environment variable for WP-CLI
+ENV HOME=/home/${USER_NAME}
+
 # Set Composer home for magento user
 ENV COMPOSER_HOME=/home/${USER_NAME}/.composer
 RUN mkdir -p $COMPOSER_HOME && chown -R ${USER_NAME}:${USER_NAME} $COMPOSER_HOME
 
+# Switch context to the non-root user
+USER ${USER_NAME}
+
 # Ensure web root directory exists and ownership allows dev user management
 WORKDIR /var/www/html
-RUN chown -R ${USER_NAME}:${USER_NAME} /var/www/html
 
 # Start php-fpm
 CMD ["php-fpm"]

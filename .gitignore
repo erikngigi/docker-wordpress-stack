@@ -2,8 +2,7 @@
 *.env
 
 # Ignore Wordpress files
-src/*
+wordpress-data
 
 # Ignore nginx configuration and log files
-nginx/conf.d
-nginx/logs
+logs
