@@ -4,7 +4,7 @@ on:
     branches:
       - local-dev
     paths:
-      - "dockerfiles/local-development"
+      - "dockerfiles/**"
       - ".github/workflows/wordpress-local-build.yml"
   workflow_dispatch:
     inputs:
@@ -35,7 +35,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
-          context: ./dockerfiles/local-development
+          context: .
           file: ./dockerfiles/local-development/Dockerfile
           push: true
           tags: |
