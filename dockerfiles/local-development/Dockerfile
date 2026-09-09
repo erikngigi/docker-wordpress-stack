@@ -39,9 +39,6 @@ ENV HOME=/home/${USER_NAME}
 ENV COMPOSER_HOME=/home/${USER_NAME}/.composer
 RUN mkdir -p $COMPOSER_HOME && chown -R ${USER_NAME}:${USER_NAME} $COMPOSER_HOME
 
-# Switch context to the non-root user
-USER ${USER_NAME}
-
 # Ensure web root directory exists and ownership allows dev user management
 WORKDIR /var/www/html
 
