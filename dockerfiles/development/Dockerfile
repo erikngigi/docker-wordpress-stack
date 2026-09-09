@@ -8,8 +8,8 @@ LABEL Version="1.1"
 
 # Define build arguments with fallbacks
 ARG USER_NAME=wordpress
-ARG USER_ID=1000
-ARG GROUP_ID=1000
+ARG USER_ID=1001
+ARG GROUP_ID=1001
 
 # Installed required system dependencies for wp-cli installation
 RUN apt-get update && apt-get install -y --no-install-recommends \
