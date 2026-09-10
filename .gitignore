@@ -3,7 +3,12 @@
 *.env.*
 
 # Ignore Wordpress files
-wordpress-data
+wordpress-data/*
+!wordpress-data/wp-content
+wordpress-data/wp-content/*
+!wordpress-data/wp-content/themes
+!wordpress-data/wp-content/plugins
+!wordpress-data/wp-content/uploads
 
 # Ignore nginx configuration and log files
 logs
