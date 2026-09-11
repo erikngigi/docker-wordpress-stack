@@ -1,11 +1,5 @@
 # .env - WordPress credentials and security keys
 
-# MySQL credentials
-CS_MARIADB_ROOT_PASSWORD=bKEN6T2oHePqGKKFXCZggmzXd
-CS_MARIADB_USER_PASSWORD=Ll58CP@LG95e!w1q
-CS_MARIADB_DATABASE_NAME=wp_0kzf9
-CS_MARIADB_USER=wp_ybfi7
-
 # Wordpress credentials
 WORDPRESS_DB_HOST=wp-mariadb:3306
 WORDPRESS_DB_NAME=wp_0kzf9

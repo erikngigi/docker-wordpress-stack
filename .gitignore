@@ -1,6 +1,7 @@
 # Ignore .env files
-*.env1
-*.env2
+.env1
+.env2
+.env
 
 # Ignore nginx configuration and log files
 logs
