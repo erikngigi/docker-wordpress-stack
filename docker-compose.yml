@@ -15,7 +15,7 @@ services:
     env_file:
       - .env1
     depends_on:
-      culturalskies-db:
+      wp-mariadb-1:
         condition: service_healthy
     networks:
       - wordpress-network
@@ -35,7 +35,7 @@ services:
     env_file:
       - .env2
     depends_on:
-      deauraustinchicago-db:
+      wp-mariadb-2:
         condition: service_healthy
     networks:
       - wordpress-network
