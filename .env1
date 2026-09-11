@@ -1,7 +1,7 @@
 # .env - WordPress credentials and security keys
 
 # Wordpress credentials
-WORDPRESS_DB_HOST=culturalskies-db:3306
+WORDPRESS_DB_HOST=culturalskies-db
 WORDPRESS_DB_NAME=wp_ivwmc
 WORDPRESS_DB_USER=wp_xn95y
 WORDPRESS_DB_PASSWORD=34heYqj~Nqg0!L@7

@@ -1,7 +1,7 @@
 # .env - WordPress credentials and security keys
 
 # Wordpress credentials
-WORDPRESS_DB_HOST=dearaustinchicago-db:3306
+WORDPRESS_DB_HOST=dearaustinchicago-db
 WORDPRESS_DB_NAME=wp_0kzf9
 WORDPRESS_DB_USER=wp_ybfi7
 WORDPRESS_DB_PASSWORD=Ll58CP@LG95e!w1q
