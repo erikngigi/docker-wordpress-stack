@@ -1,102 +1,48 @@
 # docker-compose.yml - Wordpress with PHP-FPM and MySQL
 services:
-  culturalskies-wp:
+  wordpress-1:
     image: erikngigi/wordpress-php8.3-fpm:dev
-    container_name: culturalskies-wp
+    container_name: staging-dearaustinchicago-wp
     restart: unless-stopped
     volumes:
-      - /home/eric/culturalskies-data:/var/www/html
-      - ./php/custom-settings.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
-      - ./wordpress/settings/php/php.ini-development:/usr/local/etc/php/php.ini:ro
-      - ./wordpress/settings/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
-      - ./wordpress/settings/php-fpm/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+      # Bind mount for dearaustinchicago staging files
+      - ${HOME}/wordpress-sites/dearaustinchicago/staging:/var/www/html:rw,cached
+      - ./wordpress/settings/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     ports:
-      - 9001:9000
+      - 9003:9000
     env_file:
-      - .env1
+      - .env-wp
     depends_on:
-      wp-mariadb-1:
+      wordpress-db1:
         condition: service_healthy
     networks:
-      - wordpress-network
+      - wordpress-net
 
-  deauraustinchicago-wp:
-    image: erikngigi/wordpress-php8.3-fpm:dev
-    container_name: deauraustinchicago-wp
-    restart: unless-stopped
-    volumes:
-      - /home/eric/dearaustinchicago-data:/var/www/html
-      - ./php/custom-settings.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
-      - ./wordpress/settings/php/php.ini-development:/usr/local/etc/php/php.ini:ro
-      - ./wordpress/settings/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
-      - ./wordpress/settings/php-fpm/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
-    ports:
-      - 9002:9000
-    env_file:
-      - .env2
-    depends_on:
-      wp-mariadb-2:
-        condition: service_healthy
-    networks:
-      - wordpress-network
-
-  wp-mariadb-1:
+  wordpress-db1:
     image: mariadb:11.4
-    container_name: culturalskies-db
+    container_name: staging-dearaustinchicago-db
     restart: unless-stopped
     env_file:
-      - .env
+      - .env-db
     volumes:
-      - wordpress-mariadb-data-1:/var/lib/mysql
+      - wordpress-db-volume:/var/lib/mysql
       - ./wordpress/settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
     ports:
-      - 3307:3306
-    environment:
-      MARIADB_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD_1}
-      MARIADB_DATABASE: ${CS_MARIADB_DATABASE_NAME_1}
-      MARIADB_USER: ${CS_MARIADB_USER_1}
-      MARIADB_PASSWORD: ${CS_MARIADB_USER_PASSWORD_1}
+      - 3309:3306
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - wordpress-network
-
-  wp-mariadb-2:
-    image: mariadb:11.4
-    container_name: deauraustinchicago-db
-    restart: unless-stopped
-    env_file:
-      - .env
-    volumes:
-      - wordpress-mariadb-data-2:/var/lib/mysql
-      - ./wordpress/settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
-    ports:
-      - 3308:3306
-    environment:
-      MARIADB_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD_2}
-      MARIADB_DATABASE: ${CS_MARIADB_DATABASE_NAME_2}
-      MARIADB_USER: ${CS_MARIADB_USER_2}
-      MARIADB_PASSWORD: ${CS_MARIADB_USER_PASSWORD_2}
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - wordpress-network
+      - wordpress-net
 
 networks:
-  wordpress-network:
-    name: wordpress-network
+  wordpress-net:
+    name: wordpress-net
     driver: bridge
 
 volumes:
-  wordpress-mariadb-data-1:
-    name: wordpress-mariadb-data-1
-    driver: local
-  wordpress-mariadb-data-2:
-    name: wordpress-mariadb-data-2
+  wordpress-db-volume:
+    name: wordpress-db-volume
     driver: local
