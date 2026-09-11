@@ -40,20 +40,36 @@ services:
     networks:
       - wordpress-network
 
-  wp-mariadb:
+  wp-mariadb-1:
     image: mariadb:11.4
-    container_name: wordpress-mariadb
+    container_name: culturalskies-db
     restart: unless-stopped
     volumes:
-      - wordpress-mariadb-data:/var/lib/mysql
+      - wordpress-mariadb-data-1:/var/lib/mysql
       - ./wordpress/settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
     ports:
       - 3307:3306
-    environment:
-      MYSQL_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${CS_MARIADB_DATABASE_NAME}
-      MYSQL_USER: ${CS_MARIADB_USER}
-      MYSQL_PASSWORD: ${CS_MARIADB_USER_PASSWORD}
+    env_file:
+      - env1
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - wordpress-network
+
+  wp-mariadb-2:
+    image: mariadb:11.4
+    container_name: deauraustinchicago-db
+    restart: unless-stopped
+    volumes:
+      - wordpress-mariadb-data-2:/var/lib/mysql
+      - ./wordpress/settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
+    ports:
+      - 3308:3306
+    env_file:
+      - env2
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -68,6 +84,9 @@ networks:
     driver: bridge
 
 volumes:
-  wordpress-mariadb-data:
-    name: wordpress-mariadb-data
+  wordpress-mariadb-data-1:
+    name: wordpress-mariadb-data-1
+    driver: local
+  wordpress-mariadb-data-2:
+    name: wordpress-mariadb-data-2
     driver: local
