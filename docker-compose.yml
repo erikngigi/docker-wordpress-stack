@@ -49,8 +49,11 @@ services:
       - ./wordpress/settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
     ports:
       - 3307:3306
-    env_file:
-      - .env1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD_1}
+      MYSQL_DATABASE: ${CS_MARIADB_DATABASE_NAME_1}
+      MYSQL_USER: ${CS_MARIADB_USER_1}
+      MYSQL_PASSWORD: ${CS_MARIADB_USER_PASSWORD_1}
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -68,8 +71,11 @@ services:
       - ./wordpress/settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
     ports:
       - 3308:3306
-    env_file:
-      - .env2
+    environment:
+      MYSQL_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD_2}
+      MYSQL_DATABASE: ${CS_MARIADB_DATABASE_NAME_2}
+      MYSQL_USER: ${CS_MARIADB_USER_2}
+      MYSQL_PASSWORD: ${CS_MARIADB_USER_PASSWORD_2}
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
