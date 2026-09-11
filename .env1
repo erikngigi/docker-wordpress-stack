@@ -1,0 +1,24 @@
+# .env - WordPress credentials and security keys
+
+# MySQL credentials
+CS_MARIADB_ROOT_PASSWORD=bKEN6T2oHePqGKKFXCZggmzXd
+CS_MARIADB_USER_PASSWORD=34heYqj~Nqg0!L@7
+CS_MARIADB_DATABASE_NAME=wp_ivwmc
+CS_MARIADB_USER=wp_xn95y
+
+# Wordpress credentials
+WORDPRESS_DB_HOST=wp-mariadb:3306
+WORDPRESS_DB_NAME=wp_ivwmc
+WORDPRESS_DB_USER=wp_xn95y
+WORDPRESS_DB_PASSWORD=34heYqj~Nqg0!L@7
+WORDPRESS_TABLE_PREFIX=uzz9nv9v_
+
+# WordPress security keys (generate at https://api.wordpress.org/secret-key/1.1/salt/)
+WP_AUTH_KEY=':-p3f24f_oflNVMj8ApvGuH_[2-57P/iKglXOy9J[q1XAw2t4OP#@s;0QTWF*63j'
+WP_SECURE_AUTH_KEY=']HHXICt3F5:N~I~P5pxfUx0N6*Ll6]BM_k!#70wI9;P|d0iC73y]drDz4KH;~Jd!'
+WP_LOGGED_IN_KEY='R~22Rr(c[9Ac+*&r1/c-ykyd;gMcwuWzaF7X/(/y7(:v|IMZ:[4vS-5[5@h6r(Qr'
+WP_NONCE_KEY=']4)3e3_rncz:a%34Pj#!Og5rIq4*/-02+@*ANx#~s37F9Q55!8HMBy%JJ)D1kDTX'
+WP_AUTH_SALT='|)+2V4C8s9g5Yw7@0z1#i:82SWP0Q143F_ER9Z@zV7eFpUGWM[95&t6300K|2q_j'
+WP_SECURE_AUTH_SALT='Fov06#]#z]J9RIRQ+Wj)7lOs~TYK@_&~_xV&Yii;6o@r5l%GOZM7*vBs9fzO~03z'
+WP_LOGGED_IN_SALT='!u:9u4vX!5MUAlEjbF1UE5IH]k1TfeXE8A!h&+m@Xy;U3EBXzk]m93%lUDJ0P1Ji'
+WP_NONCE_SALT='f%98;~4mi1u8_6B~]h9ybDj4m#3f2731i8[E&7/v0(eN3/ZGRv~!c7[aMOXItR1_'
