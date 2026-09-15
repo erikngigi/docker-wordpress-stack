@@ -6,3 +6,6 @@ wordpress-data
 
 # Ignore nginx configuration and log files
 logs
+
+# Ignore all SQL files
+*.sql
