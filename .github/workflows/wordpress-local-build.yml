@@ -2,10 +2,10 @@ name: Local development Wordpress PHP-FPM Docker image with WP-CLI
 on:
   push:
     branches:
-      - local-dev
+      - docker-local
     paths:
       - "dockerfiles/**"
-      - ".github/workflows/wordpress-local-build.yml"
+      - ".github/workflows/docker-local-build.yml"
   workflow_dispatch:
     inputs:
       tags:
