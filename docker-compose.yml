@@ -1,85 +1,79 @@
 # docker-compose.yml - Wordpress with PHP-FPM and MySQL
 services:
-  culturalskies-wp:
-    image: erikngigi/wordpress-php8.3-fpm:dev
-    container_name: culturalskies-wp
+  wordpress1:
+    image: erikngigi/wordpress-php8.3:staging
+    container_name: wordpress1
     restart: unless-stopped
     volumes:
-      - /home/eric/culturalskies-data:/var/www/html
-      - ./php/custom-settings.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
-      - ./wordpress/settings/php/php.ini-development:/usr/local/etc/php/php.ini:ro
-      - ./wordpress/settings/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
-      - ./wordpress/settings/php-fpm/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+      - ./wp-multisite-storage/site1:/var/www/html
+      - ./settings/php/custom.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
     ports:
       - 9001:9000
-    env_file:
-      - .env1
+    environment:
+      WORDPRESS_DB_HOST: wp-mariadb
+      WORDPRESS_DB_NAME: ${SITE1_DB_NAME}
+      WORDPRESS_DB_USER: ${SITE1_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${SITE1_DB_PASSWORD}
+      # Security keys - generated at https://api.wordpress.org/secret-key/1.1/salt/
+      WORDPRESS_AUTH_KEY: ${WP_AUTH_KEY}
+      WORDPRESS_SECURE_AUTH_KEY: ${WP_SECURE_AUTH_KEY}
+      WORDPRESS_LOGGED_IN_KEY: ${WP_LOGGED_IN_KEY}
+      WORDPRESS_NONCE_KEY: ${WP_NONCE_KEY}
+      WORDPRESS_AUTH_SALT: ${WP_AUTH_SALT}
+      WORDPRESS_SECURE_AUTH_SALT: ${WP_SECURE_AUTH_SALT}
+      WORDPRESS_LOGGED_IN_SALT: ${WP_LOGGED_IN_SALT}
+      WORDPRESS_NONCE_SALT: ${WP_NONCE_SALT}
+      # Table prefix
+      WORDPRESS_TABLE_PREFIX: site1_
     depends_on:
-      wp-mariadb-1:
+      wp-mariadb:
         condition: service_healthy
     networks:
       - wordpress-network
 
-  deauraustinchicago-wp:
-    image: erikngigi/wordpress-php8.3-fpm:dev
-    container_name: deauraustinchicago-wp
+  wordpress2:
+    image: erikngigi/wordpress-php8.3:staging
+    container_name: wordpress2
     restart: unless-stopped
     volumes:
-      - /home/eric/dearaustinchicago-data:/var/www/html
-      - ./php/custom-settings.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
-      - ./wordpress/settings/php/php.ini-development:/usr/local/etc/php/php.ini:ro
-      - ./wordpress/settings/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
-      - ./wordpress/settings/php-fpm/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf:ro
+      - ./wp-multisite-storage/site2:/var/www/html
+      - ./settings/php/custom.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
     ports:
       - 9002:9000
-    env_file:
-      - .env2
+    environment:
+      WORDPRESS_DB_HOST: wp-mariadb
+      WORDPRESS_DB_NAME: ${SITE2_DB_NAME}
+      WORDPRESS_DB_USER: ${SITE2_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${SITE2_DB_PASSWORD}
+      # Security keys - generated at https://api.wordpress.org/secret-key/1.1/salt/
+      WORDPRESS_AUTH_KEY: ${WP_AUTH_KEY}
+      WORDPRESS_SECURE_AUTH_KEY: ${WP_SECURE_AUTH_KEY}
+      WORDPRESS_LOGGED_IN_KEY: ${WP_LOGGED_IN_KEY}
+      WORDPRESS_NONCE_KEY: ${WP_NONCE_KEY}
+      WORDPRESS_AUTH_SALT: ${WP_AUTH_SALT}
+      WORDPRESS_SECURE_AUTH_SALT: ${WP_SECURE_AUTH_SALT}
+      WORDPRESS_LOGGED_IN_SALT: ${WP_LOGGED_IN_SALT}
+      WORDPRESS_NONCE_SALT: ${WP_NONCE_SALT}
+      # Table prefix
+      WORDPRESS_TABLE_PREFIX: site2_
     depends_on:
-      wp-mariadb-2:
+      wp-mariadb:
         condition: service_healthy
     networks:
       - wordpress-network
 
-  wp-mariadb-1:
+  wp-mariadb:
     image: mariadb:11.4
-    container_name: culturalskies-db
+    container_name: wordpress-mariadb
     restart: unless-stopped
-    env_file:
-      - .env
     volumes:
-      - wordpress-mariadb-data-1:/var/lib/mysql
-      - ./wordpress/settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
+      - wordpress-mariadb-data:/var/lib/mysql
+      - ./settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
+      - ./settings/mysql:/docker-entrypoint-initdb.d
     ports:
       - 3307:3306
     environment:
-      MARIADB_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD_1}
-      MARIADB_DATABASE: ${CS_MARIADB_DATABASE_NAME_1}
-      MARIADB_USER: ${CS_MARIADB_USER_1}
-      MARIADB_PASSWORD: ${CS_MARIADB_USER_PASSWORD_1}
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - wordpress-network
-
-  wp-mariadb-2:
-    image: mariadb:11.4
-    container_name: deauraustinchicago-db
-    restart: unless-stopped
-    env_file:
-      - .env
-    volumes:
-      - wordpress-mariadb-data-2:/var/lib/mysql
-      - ./wordpress/settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
-    ports:
-      - 3308:3306
-    environment:
-      MARIADB_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD_2}
-      MARIADB_DATABASE: ${CS_MARIADB_DATABASE_NAME_2}
-      MARIADB_USER: ${CS_MARIADB_USER_2}
-      MARIADB_PASSWORD: ${CS_MARIADB_USER_PASSWORD_2}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -94,9 +88,6 @@ networks:
     driver: bridge
 
 volumes:
-  wordpress-mariadb-data-1:
-    name: wordpress-mariadb-data-1
-    driver: local
-  wordpress-mariadb-data-2:
-    name: wordpress-mariadb-data-2
+  wordpress-mariadb-data:
+    name: wordpress-mariadb-data
     driver: local
