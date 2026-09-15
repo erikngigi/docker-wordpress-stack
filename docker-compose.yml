@@ -5,7 +5,7 @@ services:
     container_name: wordpress1
     restart: unless-stopped
     volumes:
-      - ./wp-multisite-storage/site1:/var/www/html
+      - /home/eric/Applications/cs-wordpress-sites/cultural-skies:/var/www/html
       - ./settings/php/custom.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
     ports:
       - 9001:9000
@@ -36,7 +36,7 @@ services:
     container_name: wordpress2
     restart: unless-stopped
     volumes:
-      - ./wp-multisite-storage/site2:/var/www/html
+      - /home/eric/Applications/cs-wordpress-sites/dear-austin-chicago:/var/www/html
       - ./settings/php/custom.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
     ports:
       - 9002:9000
