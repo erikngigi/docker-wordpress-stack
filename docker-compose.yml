@@ -4,7 +4,6 @@ services:
     image: nginx:alpine
     container_name: wordpress-webserver
     restart: unless-stopped
-    user: 1000:1000
     ports:
       - 8080:80
       - 8081:81
@@ -18,7 +17,7 @@ services:
       - wordpress-network
 
   wordpress1:
-    image: erikngigi/wordpress-php8.3-fpm:dev
+    image: erikngigi/wordpress-php8.3:local
     container_name: wordpress1
     restart: unless-stopped
     volumes:
@@ -46,7 +45,7 @@ services:
       - wordpress-network
 
   wordpress2:
-    image: erikngigi/wordpress-php8.3-fpm:dev
+    image: erikngigi/wordpress-php8.3:local
     container_name: wordpress2
     restart: unless-stopped
     volumes:
