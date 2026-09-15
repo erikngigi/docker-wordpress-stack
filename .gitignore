@@ -1,7 +1,11 @@
 # Ignore .env files
-*.env1
-*.env2
 *.env
+
+# Ignore Wordpress files
+wp-multisite-storage
 
 # Ignore nginx configuration and log files
 logs
+
+# Ignore all SQL files
+*.sql
