@@ -2,7 +2,7 @@
 *.env
 
 # Ignore Wordpress files
-wordpress-data
+wp-multisite-storage
 
 # Ignore nginx configuration and log files
 logs

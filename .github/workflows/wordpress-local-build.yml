@@ -43,4 +43,4 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.WORDPRESS_IMAGE_NAME }}:local
 
       - name: Image build complete
-        run: echo "✅ Custom Wordpress docker image built and pushed successfully."
+        run: echo " Custom Wordpress docker image built and pushed successfully."

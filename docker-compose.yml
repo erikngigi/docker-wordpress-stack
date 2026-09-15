@@ -4,35 +4,59 @@ services:
     image: nginx:alpine
     container_name: wordpress-webserver
     restart: unless-stopped
+    user: 1000:1000
     ports:
       - 8080:80
-    environment:
-      WP_HOST: wordpress
-      WP_PORT: 9000
-      SERVER_NAME: localhost
+      - 8081:81
     volumes:
-      - ./wordpress-data:/var/www/html
-      - ./wordpress/settings/templates/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
-      - ./logs/nginx:/var/log/nginx:rw
+      - ./wp-multisite-storage:/var/www/html:ro
+      - ./settings/nginx/conf.d:/etc/nginx/conf.d:ro
     depends_on:
-      - wordpress
+      - wordpress1
+      - wordpress2
     networks:
       - wordpress-network
 
-  wordpress:
-    image: erikngigi/wordpress-php8.3-fpm:local
-    container_name: wordpress
+  wordpress1:
+    image: erikngigi/wordpress-php8.3-fpm:dev
+    container_name: wordpress1
     restart: unless-stopped
     volumes:
-      - ./wordpress-data:/var/www/html
-      - ./wordpress/settings/php/custom.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
-    ports:
-      - 9000:9000
+      - ./wp-multisite-storage/site1:/var/www/html
+      - ./settings/php/custom.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
     environment:
-      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
-      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
-      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
-      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_HOST: wp-mariadb
+      WORDPRESS_DB_NAME: ${SITE1_DB_NAME}
+      WORDPRESS_DB_USER: ${SITE1_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${SITE1_DB_PASSWORD}
+      # Security keys - generated at https://api.wordpress.org/secret-key/1.1/salt/
+      WORDPRESS_AUTH_KEY: ${WP_AUTH_KEY}
+      WORDPRESS_SECURE_AUTH_KEY: ${WP_SECURE_AUTH_KEY}
+      WORDPRESS_LOGGED_IN_KEY: ${WP_LOGGED_IN_KEY}
+      WORDPRESS_NONCE_KEY: ${WP_NONCE_KEY}
+      WORDPRESS_AUTH_SALT: ${WP_AUTH_SALT}
+      WORDPRESS_SECURE_AUTH_SALT: ${WP_SECURE_AUTH_SALT}
+      WORDPRESS_LOGGED_IN_SALT: ${WP_LOGGED_IN_SALT}
+      WORDPRESS_NONCE_SALT: ${WP_NONCE_SALT}
+      WORDPRESS_TABLE_PREFIX: site1_
+    depends_on:
+      wp-mariadb:
+        condition: service_healthy
+    networks:
+      - wordpress-network
+
+  wordpress2:
+    image: erikngigi/wordpress-php8.3-fpm:dev
+    container_name: wordpress2
+    restart: unless-stopped
+    volumes:
+      - ./wp-multisite-storage/site2:/var/www/html
+      - ./settings/php/custom.ini:/usr/local/etc/php/conf.d/custom-settings.ini:ro
+    environment:
+      WORDPRESS_DB_HOST: wp-mariadb
+      WORDPRESS_DB_NAME: ${SITE2_DB_NAME}
+      WORDPRESS_DB_USER: ${SITE2_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${SITE2_DB_PASSWORD}
       # Security keys - generated at https://api.wordpress.org/secret-key/1.1/salt/
       WORDPRESS_AUTH_KEY: ${WP_AUTH_KEY}
       WORDPRESS_SECURE_AUTH_KEY: ${WP_SECURE_AUTH_KEY}
@@ -43,7 +67,7 @@ services:
       WORDPRESS_LOGGED_IN_SALT: ${WP_LOGGED_IN_SALT}
       WORDPRESS_NONCE_SALT: ${WP_NONCE_SALT}
       # Table prefix
-      WORDPRESS_TABLE_PREFIX: cxolf_
+      WORDPRESS_TABLE_PREFIX: site2_
     depends_on:
       wp-mariadb:
         condition: service_healthy
@@ -56,14 +80,12 @@ services:
     restart: unless-stopped
     volumes:
       - wordpress-mariadb-data:/var/lib/mysql
-      - ./wordpress/settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
+      - ./settings/mysql/wordpress.cnf:/etc/mysql/conf.d/wordpress.cnf:ro
+      - ./settings/mysql:/docker-entrypoint-initdb.d
     ports:
       - 3307:3306
     environment:
-      MYSQL_ROOT_PASSWORD: ${CS_MARIADB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${CS_MARIADB_DATABASE_NAME}
-      MYSQL_USER: ${CS_MARIADB_USER}
-      MYSQL_PASSWORD: ${CS_MARIADB_USER_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
